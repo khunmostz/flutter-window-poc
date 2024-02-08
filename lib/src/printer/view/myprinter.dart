@@ -58,22 +58,23 @@ class _MyPrinterState extends State<MyPrinter> {
     final doc = pw.Document();
 
     /// for using an image from assets
-    // final image = await imageFromAssetBundle('assets/image.png');
+    // final image =
+    // await imageFromAssetBundle('assets/qnd25jn2yvLr3n65or3-o.png');
 
-    doc.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text('Hello eclectify Enthusiast'),
-          ); // Center
-        },
-      ),
-    ); // Page
+    // doc.addPage(
+    //   pw.Page(
+    //     pageFormat: PdfPageFormat.a4,
+    //     build: (pw.Context context) {
+    //       return pw.Center(child: pw.Image(image)); // Center
+    //     },
+    //   ),
+    // ); // Page
 
     /// print the document using the iOS or Android print service:
+    final ByteData data = await rootBundle.load('assets/sample.pdf');
+
     await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => doc.save());
+        onLayout: (PdfPageFormat format) async => data.buffer.asUint8List());
 
     /// share the document to other applications:
     // await Printing.sharePdf(bytes: await doc.save(), filename: 'my-document.pdf');
@@ -94,7 +95,7 @@ class _MyPrinterState extends State<MyPrinter> {
         build: (pw.Context context) {
           return pw.Center(
             child: pw.Text(
-              'Hello eclectify Enthusiast',
+              'Print yak ship hai',
               style: const pw.TextStyle(fontSize: 30),
             ),
           );

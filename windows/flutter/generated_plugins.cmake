@@ -6,7 +6,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_windows
   printing
   syncfusion_pdfviewer_windows
-  thermal_printer
   url_launcher_windows
   webview_universal
 )

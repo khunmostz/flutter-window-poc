@@ -14,6 +14,16 @@ class MyPrinter extends StatefulWidget {
 
 class _MyPrinterState extends State<MyPrinter> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      var printer = await Printing.listPrinters();
+      print(printer);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +34,7 @@ class _MyPrinterState extends State<MyPrinter> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
-              onPressed: _createPdf,
+              onPressed: _silentPrint,
               child: const Text(
                 'Create & Print PDF',
               ),
@@ -53,28 +63,53 @@ class _MyPrinterState extends State<MyPrinter> {
     );
   }
 
+  /// create PDF & print it silently
+  void _silentPrint() async {
+    final doc = pw.Document();
+
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Text("Print yakship"); // Center
+        },
+      ),
+    );
+
+    Printing.directPrintPdf(
+        printer: const Printer(url: 'Brother DCP-T520W'),
+        onLayout: (format) => doc.save());
+  }
+
   /// create PDF & print it
   void _createPdf() async {
     final doc = pw.Document();
 
     /// for using an image from assets
     // final image =
-    // await imageFromAssetBundle('assets/qnd25jn2yvLr3n65or3-o.png');
+    //     await imageFromAssetBundle('assets/qnd25jn2yvLr3n65or3-o.png');
 
-    // doc.addPage(
-    //   pw.Page(
-    //     pageFormat: PdfPageFormat.a4,
-    //     build: (pw.Context context) {
-    //       return pw.Center(child: pw.Image(image)); // Center
-    //     },
-    //   ),
-    // ); // Page
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Text("Print yakship"); // Center
+        },
+      ),
+    ); // Page
 
     /// print the document using the iOS or Android print service:
-    final ByteData data = await rootBundle.load('assets/sample.pdf');
+    // final ByteData data = await rootBundle.load('assets/sample.pdf');
 
-    await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => data.buffer.asUint8List());
+    // await Printing.layoutPdf(
+    //     onLayout: (PdfPageFormat format) async => data.buffer.asUint8List());
+
+    Printing.layoutPdf(
+      format: PdfPageFormat.a4,
+      onLayout: (PdfPageFormat format) {
+        return doc.save();
+      },
+    );
 
     /// share the document to other applications:
     // await Printing.sharePdf(bytes: await doc.save(), filename: 'my-document.pdf');
